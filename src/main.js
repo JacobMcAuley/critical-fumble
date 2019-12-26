@@ -7,39 +7,22 @@ class CriticalFumble{
     }
 
     async findTable(){
+
         let critical = RollTable.collection.entities.find(function(table){ return table.data.name == "Critical-Fumble Critical"});
-        let fumble = RollTable.collection.entities.find(function(table){ return table.data.name == "Critical-Fumble Fumble"});
-
-        if(!critical)
-            critical = await this._generateCritical("Critical-Fumble Critical", );
-        if(!fumble)
-            fumble = await this._generateFumble("Critical-Fumble Fumble", );
-
-        
+        let fumble = 
+        Object.keys(CRITICAL_FUMBLE_DESC).forEach(function(tableName){
+            let tempTable = tableName.charAt(0).toUpperCase()
+            if(!RollTable.collection.entities.find(function(table){ return table.data.name == `Critical-Fumble ${tempTable}`})){ // Doesn't return a value
+                await this._generateTable(`Critical-Fumble ${tempTable}`, CRITICAL_FUMBLE_DESC[tableName]);
+            }
+        })        
         return [critical, fumble];
     }
 
-    async _generateTable(tableName, itemDescriptions){
-        let table = await RollTable.create({name: "Critical-Fumble Fumble", type: "base", folder: null, types: "base", formula: "1d100"}, {displaySheet: false});
-        let previous = 1;
-        let counter = 1
-        let mod = 0
-        for(let i = 1; i <= 30; ++i){
-            switch(counter){
-                case 1:
-                    mod = 4;
-                    break;
-                case 2:
-                    mod = 3;
-                    break;
-                case 3:
-                    mod = 0;
-                    break;
-            }
-            await table.createTableResult({ collection: undefined,drawn: false, range: [previous, previous+mod],type: 0,weight: 1,text: itemDescriptions[i-1]})
-            previous = previous+mod+1;
-            counter = (++counter == 4) ? counter = 1 : counter++;
-        }
+    async _generateTable(tableName, data){
+        let table = await RollTable.create({name: tableName, type: "base", folder: null, types: "base", formula: "1d100"}, {displaySheet: false});
+
+        await table.createTableResult({ collection: undefined,drawn: false, range: [NUM1, NUM2],type: 0,weight: 1,text: itemDescriptions[i-1]})
     }
 
     init(){
