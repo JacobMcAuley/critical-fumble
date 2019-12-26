@@ -1,3 +1,5 @@
+
+/*https://sterlingvermin.files.wordpress.com/2016/09/critical-hits-revisited.pdf*/
 const CRITICAL_FUMBLE_DESC =
 {
     fumble: [
