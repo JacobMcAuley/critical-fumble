@@ -4,13 +4,14 @@
     "description": "Automatically roll the critical/fumble table when rolling attacks!",
     "version": "0.0.0",
     "author": "Jacob McAuley",
-    "scripts": [
-        "./src/main.js",
+    "esmodules": [
+        "./src/criticalFumble.js",
+        "./src/criticalLoot.js",
         "./src/hooks.js",
         "./config/config.js"
     ],
     "url": "https://github.com/JacobMcAuley/critical-fumble",
     "manifest": "https://github.com/JacobMcAuley/critical-fumble/raw/master/module.json",
     "download": "https://github.com/JacobMcAuley/critical-fumble/archive/master.zip",
-    "minimumCoreVersion": "0.4.1"
+    "minimumCoreVersion": "0.4.3"
 }
