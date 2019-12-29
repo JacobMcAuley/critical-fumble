@@ -2,8 +2,9 @@
     "name": "critical-fumble",
     "title": "Critical Fumble",
     "description": "Automatically roll the critical/fumble table when rolling attacks!",
-    "version": "0.0.0",
+    "version": "0.5.0",
     "author": "Jacob McAuley",
+    "systems" : ["dnd5e"],
     "esmodules": [
         "./src/criticalFumble.js",
         "./src/criticalLoot.js",
