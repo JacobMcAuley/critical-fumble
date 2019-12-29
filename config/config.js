@@ -3,6 +3,8 @@
 export const CRITICAL_FUMBLE_DESC =
 {
     fumble : {
+        img: "modules/critical-fumble/icons/fumble.svg",
+        sound: undefined,
         roll: "1d100",
         table: [
             {
@@ -129,6 +131,8 @@ export const CRITICAL_FUMBLE_DESC =
         ]
     },    
     bludgeoning: {    
+        img: "modules/critical-fumble/icons/bludgeoning.svg",
+        sound: "modules/critical-fumble/sounds/bludgeoning.wav",
         roll: "1d20",
         table: [
             {
@@ -174,6 +178,8 @@ export const CRITICAL_FUMBLE_DESC =
         ],
     },
     piercing: {
+        img: "modules/critical-fumble/icons/piercing.svg",
+        sound: "modules/critical-fumble/sounds/piercing.wav",
         roll: "1d20",
         table : [
             {
@@ -219,6 +225,8 @@ export const CRITICAL_FUMBLE_DESC =
         ],
     },
     slashing : { 
+        img: "modules/critical-fumble/icons/slashing.svg",
+        sound: "modules/critical-fumble/sounds/slashing.wav",
         roll: "1d20",  
         table : [
             {
@@ -262,9 +270,10 @@ export const CRITICAL_FUMBLE_DESC =
                 description: "Slash! Deal the maximum result of your damage dice twice, roll on the major injury chart, and the creature is bleeding. For the next minute the creature loses 2d8 hit points at the start of each of its turns until it uses an action to staunch this wound."
             }        
         ],
-
     },
     acid: {
+        img: "modules/critical-fumble/icons/acid.svg",
+        sound: "modules/critical-fumble/sounds/acid.wav",
         roll: "1d20",
         table : [
             {
@@ -310,6 +319,8 @@ export const CRITICAL_FUMBLE_DESC =
         ],
     },
     cold: {
+        img: "modules/critical-fumble/icons/cold.svg",
+        sound: "modules/critical-fumble/sounds/cold.wav",
         roll: "1d20",
         table : [
             {
@@ -355,6 +366,8 @@ export const CRITICAL_FUMBLE_DESC =
         ],
     },    
     fire: {
+        img: "modules/critical-fumble/icons/fire.svg",
+        sound: "modules/critical-fumble/sounds/fire.wav",
         roll: "1d20",
         table : [
             {
@@ -401,6 +414,8 @@ export const CRITICAL_FUMBLE_DESC =
         ],
     },
     force: {
+        img: "modules/critical-fumble/icons/force.svg",
+        sound: "modules/critical-fumble/sounds/force.wav",
         roll: "1d20",
         table : [
             {
@@ -446,6 +461,8 @@ export const CRITICAL_FUMBLE_DESC =
         ],
     },
     lightning: {
+        img: "modules/critical-fumble/icons/lightning.svg",
+        sound: "modules/critical-fumble/sounds/lightning.wav",
         roll: "1d20",
         table : [
             {
@@ -491,6 +508,8 @@ export const CRITICAL_FUMBLE_DESC =
         ],
     },
     necrotic: {
+        img: "modules/critical-fumble/icons/necrotic.svg",
+        sound: undefined,
         roll: "1d20",
         table : [
             {
@@ -536,6 +555,8 @@ export const CRITICAL_FUMBLE_DESC =
         ],
     },
     poison: {
+        img: "modules/critical-fumble/icons/poison.svg",
+        sound: "modules/critical-fumble/sounds/poison.wav",
         roll: "1d20",
         table : [
             {
@@ -581,6 +602,9 @@ export const CRITICAL_FUMBLE_DESC =
         ],
     },
     psychic: {
+        img: "modules/critical-fumble/icons/psychic.svg",
+        img: "modules/critical-fumble/icons/psychic.svg",
+        sound: undefined,
         roll: "1d20",
         table : [
             {
@@ -626,6 +650,8 @@ export const CRITICAL_FUMBLE_DESC =
         ],
     },  
     radiant: {
+        img: "modules/critical-fumble/icons/radiant.svg",
+        sound: undefined,
         roll: "1d20",
         table : [
             {
@@ -671,6 +697,8 @@ export const CRITICAL_FUMBLE_DESC =
         ],
     },
     thunder: {
+        img: "modules/critical-fumble/icons/lightning.svg",
+        sound: "modules/critical-fumble/sounds/lightning.wav",
         roll: "1d20",
         table : [
             {
@@ -716,6 +744,7 @@ export const CRITICAL_FUMBLE_DESC =
         ],
     },
     minor: {
+        sound: undefined,
         roll: "1d20",
         table : [
             {
@@ -745,6 +774,7 @@ export const CRITICAL_FUMBLE_DESC =
         ],
     },
     major: {
+        sound: undefined,
         roll: "1d20",
         table : [
             {
@@ -775,6 +805,7 @@ export const CRITICAL_FUMBLE_DESC =
         ],
     }, 
     insanity: {
+        sound: undefined,
         roll: "1d20",
         table : [
             {
@@ -871,34 +902,267 @@ export const CRITICAL_FUMBLE_LOOT = {
             {
                 roll : [1, 30],
                 description: "5d6 CP",
-                action: "5d6"
+                action: [
+                    {
+                        roll: "5d6",
+                        description: "CP",
+                        multiplier: 1
+                    }
+                ]
             },
             {
                 roll : [31, 60],
                 description: "4d6 SP",
-                action: "4d6"
+                action: [
+                    {
+                        roll: "4d6",
+                        description: "SP",
+                        multiplier: 1
+                    }
+                ]
             },
             {
                 roll : [61, 70],
                 description: "3d6 EP",
-                action: "3d6"
+                action: [
+                    {
+                        roll: "3d6",
+                        description: "EP",
+                        multiplier: 1
+                    }
+                ]
             },
             {
                 roll : [71, 95],
                 description: "3d6 GP",
-                action: "3d6"
+                action: [
+                    {
+                        roll: "3d6",
+                        description: "GP",
+                        multiplier: 1
+                    }
+                ]
             },
             {
                 roll : [96, 100],
                 description: "1d6 PP",
-                action: "1d6"
+                action: [
+                    {
+                        roll: "1d6",
+                        description: "PP",
+                        multiplier: 1
+                    }
+                ]
             },
         ]
-    }
+    },
+    CR_5_10: {
+        roll: "1d100",
+        collection : undefined,
+        type : 0,
+        table : [
+            {
+                roll : [1, 30],
+                description: "4d6 CP * 100 + 1d6 EP * 10",
+                action: [
+                    {
+                        roll: "4d6",
+                        description: "CP",
+                        multiplier: 100
+                    },
+                    {
+                        roll: "1d6",
+                        description: "EP",
+                        multiplier: 10
+                    }                    
+                ]
+            },
+            {
+                roll : [31, 60],
+                description: "6d6 SP * 10 + 2d6 GP * 10",
+                action: [
+                    {
+                        roll: "6d6",
+                        description: "SP",
+                        multiplier: 10
+                    },
+                    {
+                        roll: "2d6",
+                        description: "GP",
+                        multiplier: 10                        
+                    }
+                ]
+            },
+            {
+                roll : [61, 70],
+                description: "1d6 EP * 100 + 2d6 GP * 10",
+                action: [
+                    {
+                        roll: "1d6",
+                        description: "EP",
+                        multiplier: 100
+                    },
+                    {
+                        roll: "2d6",
+                        description: "GP",
+                        multiplier: 10                        
+                    }
+                ]
+            },
+            {
+                roll : [71, 95],
+                description: "4d6 GP * 10",
+                action: [
+                    {
+                        roll: "4d6",
+                        description: "GP",
+                        multiplier: 10
+                    }
+                ]
+            },
+            {
+                roll : [96, 100],
+                description: "3d6 PP",
+                action: [
+                    {
+                        roll: "3d6",
+                        description: "PP",
+                        multiplier: 1
+                    }
+                ]
+            },
+        ]
+    }, 
+    CR_11_16: {
+        roll: "1d100",
+        collection : undefined,
+        type : 0,
+        table : [
+            {
+                roll : [1, 20],
+                description: "4d6 SP * 100 + 1d6 GP * 100",
+                action: [
+                    {
+                        roll: "4d6",
+                        description: "SP",
+                        multiplier: 100
+                    },
+                    {
+                        roll: "1d6",
+                        description: "GP",
+                        multiplier: 100
+                    }                    
+                ]
+            },
+            {
+                roll : [21, 35],
+                description: "1d6 EP * 100 + 1d6 GP * 100",
+                action: [
+                    {
+                        roll: "1d6",
+                        description: "EP",
+                        multiplier: 100
+                    },
+                    {
+                        roll: "1d6",
+                        description: "GP",
+                        multiplier: 100                        
+                    }
+                ]
+            },
+            {
+                roll : [36, 75],
+                description: "2d6 GP * 100 + 1d6 PP * 10",
+                action: [
+                    {
+                        roll: "2d6",
+                        description: "GP",
+                        multiplier: 100
+                    },
+                    {
+                        roll: "1d6",
+                        description: "PP",
+                        multiplier: 10                        
+                    }
+                ]
+            },
+            {
+                roll : [76, 100],
+                description: "2d6 GP * 100 + 2d6 PP * 10",
+                action: [
+                    {
+                        roll: "2d6",
+                        description: "GP",
+                        multiplier: 100
+                    },
+                    {
+                        roll: "2d6",
+                        description: "PP",
+                        multiplier: 10                        
+                    }
+                ]
+            }
+        ]
+    }, 
+    CR_17: {
+        roll: "1d100",
+        collection : undefined,
+        type : 0,
+        table : [
+            {
+                roll : [1, 15],
+                description: "2d6 EP * 1000 + 8d6 GP * 100",
+                action: [
+                    {
+                        roll: "2d6",
+                        description: "EP",
+                        multiplier: 1000
+                    },
+                    {
+                        roll: "8d6",
+                        description: "GP",
+                        multiplier: 100
+                    }                    
+                ]
+            },
+            {
+                roll : [16, 55],
+                description: "1d6 GP * 1000 + 1d6 PP * 100",
+                action: [
+                    {
+                        roll: "1d6",
+                        description: "GP",
+                        multiplier: 1000
+                    },
+                    {
+                        roll: "1d6",
+                        description: "PP",
+                        multiplier: 100                        
+                    }
+                ]
+            },
+            {
+                roll : [56, 100],
+                description: "1d6 GP * 1000 + 2d6 PP * 100",
+                action: [
+                    {
+                        roll: "1d6",
+                        description: "GP",
+                        multiplier: 1000
+                    },
+                    {
+                        roll: "2d6",
+                        description: "PP",
+                        multiplier: 100                        
+                    }
+                ]
+            }
+        ]
+    }, 
 }
 
 
-const CRITICAL_FUMBLE_CONFIG = [
+export const CRITICAL_FUMBLE_CONFIG = [
     {
         module : "critical-fumble",
         key: "criticalTable",
@@ -924,5 +1188,44 @@ const CRITICAL_FUMBLE_CONFIG = [
             type : Boolean,
             choices : undefined 
         }
-    }
+    },
+    {
+        module : "critical-fumble",
+        key: "sounds",
+        settings : {
+            name : "Enable Rolltable sounds",
+            hint : "Allows for sounds to be played during table hits",
+            scope : "world",
+            config : true,
+            default : true,
+            type : Boolean,
+            choices : undefined 
+        }
+    },
+    {
+        module : "critical-fumble",
+        key: "lootTables",
+        settings : {
+            name : "Enable Loot tables",
+            hint : "Allow for the Loot Table to be rolled on NPC death",
+            scope : "world",
+            config : true,
+            default : true,
+            type : Boolean,
+            choices : undefined 
+        }
+    },
+    {
+        module : "critical-fumble",
+        key: "coinDistribution",
+        settings : {
+            name : "Enable coin distribution",
+            hint : "Enable the coin distribution prompt",
+            scope : "world",
+            config : true,
+            default : true,
+            type : Boolean,
+            choices : undefined 
+        }
+    },
 ]
