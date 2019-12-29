@@ -163,5 +163,4 @@ This module and all previous and future modules, as always, will be free to use 
 ## Examples
 
 ![Crit_Fire](examples/Crit.gif)
-![Crit_Piercing](examples/Crit2.gif)
 ![Crit_Loot](examples/Loot.gif)
