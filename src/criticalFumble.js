@@ -7,6 +7,8 @@ class CriticalFumble{
         this.tables = [];
         this.init();
         this.findTable();
+        this.debug = false;
+        this.test = 20;
     }
 
     capitalizeFirst(name){
@@ -17,19 +19,20 @@ class CriticalFumble{
         Object.keys(CRITICAL_FUMBLE_DESC).forEach(async function(tableName){
             let tempTable = this.capitalizeFirst(tableName);
             let result = await RollTable.collection.entities.find(function(table){ return table.data.name == `Critical-Fumble ${tempTable}`})
-            if(result == undefined){ 
+            if(result == undefined)
                 await this._generateTable(`Critical-Fumble ${tempTable}`, CRITICAL_FUMBLE_DESC[tableName]);
-            }
-            else{
+            else
                 this.tables.push(result);
-            }
         }.bind(this))    
     }
 
     async _generateTable(tableName, data){
         let table = await RollTable.create({name: tableName, type: "base", folder: null, types: "base", formula: data.roll}, {displaySheet: false});
         for(const tableSlot of data.table){
-            await table.createTableResult({collection: undefined,drawn: false, range: [tableSlot.roll[0], tableSlot.roll[1]] ,type: 0, weight: 1, text: tableSlot.description})
+            let flagInfo = {
+                critical_fumble_audio : data.sound
+            }
+            let result = await table.createTableResult({img: data.img, collection: undefined,drawn: false, range: [tableSlot.roll[0], tableSlot.roll[1]] ,type: 0, weight: 1, text: tableSlot.description, flags: flagInfo});
         }
         this.tables.push(table);
     }
@@ -41,7 +44,7 @@ class CriticalFumble{
                 this.validateData(app);
             }
             catch(e){
-                console.log(`Error in CreateChat: ${e}`);
+                console.log(`Error in CreateChat: ${e} at ${e.lineNumber}`);
             }
         })
     }
@@ -52,6 +55,8 @@ class CriticalFumble{
         let data = JSON.parse(app.data.roll)
         let type = data.parts[0].options.damageType;
         let roll = this._getRoll(data.parts[0].rolls);
+        if(this.debug)
+            roll = this.test;
         let table = this._validThreshold(roll, this.capitalizeFirst(type))
         if(table != undefined)
             this.rollTable(table);
@@ -74,22 +79,22 @@ class CriticalFumble{
     }
 
     _validThreshold(roll, type){
-        if(roll == 1)
+        if(roll == 1 && game.settings.get('critical-fumble', 'fumbleTable'))
             return this.tables.find(tableName => tableName.data.name === "Critical-Fumble Fumble");
-        else if(roll == 20)
+        else if(roll == 20 && game.settings.get('critical-fumble', 'criticalTable'))
             return this.tables.find(tableName => tableName.data.name === `Critical-Fumble ${type}`);
-        return undefined; // CHANGE LATER DEFAULT       
+        return undefined;      
     }
 
     async rollTable(table){
-        let [roll, result] = table.roll()
-        console.log(roll);
-        console.log(result);
+        let [roll, result] = table.roll();
         if (result !== null ) {
             await table.draw({roll, result});
         }
-        //let audio = new Audio(CONFIG.sounds.dice) // Sound options?
-        //audio.play();
+        if(game.settings.get('critical-fumble', 'sounds')){
+            let audio = new Audio(result.flags["critical_fumble_audio"]) // Sound options?
+            audio.play();
+        }
     }
 
     rollOverload(){
@@ -119,7 +124,7 @@ class CriticalFumble{
             let d20 = roll.parts[0];
             d20.options.critical = critical;
             d20.options.fumble = fumble;
-            d20.options.damageType = data.item.damage.parts[0][data.item.damage.parts[0].length - 1] || 0;
+            d20.options.damageType = data.item.damage.parts[0][data.item.damage.parts[0].length - 1] || 0; // This is the overload
             // Convert the roll to a chat message
             roll.toMessage({
                 speaker: speaker,
