@@ -1,4 +1,6 @@
 import {CRITICAL_FUMBLE_LOOT} from "../config/config.js"
+import {CRITICAL_FUMBLE_CONFIG} from "../config/config.js"
+
 
 class CriticalLoot{
     constructor(){
@@ -6,8 +8,6 @@ class CriticalLoot{
         this.init();
         this.findTable();
     }
-
-
 
     findTable(){
         Object.keys(CRITICAL_FUMBLE_LOOT).forEach(async function(tableName){
@@ -25,7 +25,10 @@ class CriticalLoot{
     async _generateTable(tableName, data){
         let table = await RollTable.create({name: tableName, type: "base", folder: null, types: "base", formula: data.roll}, {displaySheet: false});
         for(const tableSlot of data.table){
-            await table.createTableResult({TEST: 1000, collection: undefined,drawn: false, range: [tableSlot.roll[0], tableSlot.roll[1]] ,type: 0, weight: 1, text: tableSlot.description}, {TEST: 1000})
+            let flagData = {
+                critical_fumble_actions : tableSlot.action
+            }
+            await table.createTableResult({collection: undefined,drawn: false, range: [tableSlot.roll[0], tableSlot.roll[1]] ,type: 0, weight: 1, text: tableSlot.description, flags: flagData})
         }
         this.tables.push(table);
     }
@@ -34,17 +37,15 @@ class CriticalLoot{
         Hooks.on("updateToken", (token, id, actorData) => {
             try{
                 this.validateData(token.actor.id, actorData)
-            }catch( err ){
-                console.error(`Error in Critical-Loot: ${err}`)
+            }catch(e){
+                console.log(`Error in CreateChat: ${e} at ${e.lineNumber}`);
             }
-            console.log(token.actor.id);
-            // let actor = Actor.collection.get(id)
-            // let cr = actor.data.data.details.cr 
-            console.log(actorData.actorData.data.attributes.hp.value);
         })
     }
     
     validateData(actorId, quickData){
+        if(!game.settings.get('critical-fumble', 'lootTables'))
+            return
         const actor = Actor.collection.get(actorId);
         if(actor.isPC)
             return;
@@ -70,7 +71,16 @@ class CriticalLoot{
 
     getTableByCR(actor){
         let cr = actor.data.data.details.cr;
-        return this.tables.find(tableName => tableName.data.name === `Critical-Fumble CR_0_4`);
+        if(cr >= 0 && cr <= 4)
+            return this.tables.find(tableName => tableName.data.name === `Critical-Fumble CR_0_4`);
+        else if(cr >= 5 && cr <= 10)
+            return this.tables.find(tableName => tableName.data.name === `Critical-Fumble CR_5_10`);
+        else if(cr >= 11 && cr <= 16)
+            return this.tables.find(tableName => tableName.data.name === `Critical-Fumble CR_0_4`);
+        else if(cr >= 17)
+            return this.tables.find(tableName => tableName.data.name === `Critical-Fumble CR_17`);
+        else   
+            throw("Unexpected CR");
     }
 
     isZeroHealth(actor){
@@ -79,29 +89,102 @@ class CriticalLoot{
 
     async rollTable(table){
         let [roll, result] = table.roll()
-        console.log(roll);
-        console.log(result); //result.text
+        result.img = "modules/critical-fumble/icons/coins.svg";
         if (result !== null ) {
             await table.draw({roll, result});
         }   
+        let parsedRolls = result.flags['critical_fumble_actions'];
+        this.handleRolls(parsedRolls); 
     }
 
-    _roll = (newRoll) => {
-        let roll = new Roll(newRoll).roll();
-        let speaker = "Critical Fumble"
-        let flavor = "Rolls for coins"
+    handleRolls(rolls){
+        let coins = []
+        
+        for(let i = 0; i < rolls.length; ++i){
+            let roll = this._roll(rolls[i].roll, rolls[i].description, rolls[i].multiplier); 
+            coins.push({coinAmount: roll, cointType: rolls[i].description});
+        }
+        if(game.settings.get('critical-fumble', 'coinDistribution'))
+            this._coinDistributePrompt(coins)
+    }
+
+    _roll = (newRoll, coin, multiplier) => {
+        let roll = new Roll(`${newRoll} * ${multiplier}`).roll();
+        let rollMode = "roll";
+        let speaker = "Critical Fumble";
+        let flavor = `Rolls for ${coin}`
+        let sound = undefined;
+        if(game.settings.get('critical-fumble', 'sounds'))
+            sound = "modules/critical-fumble/sounds/money_drop.wav"
+
         roll.toMessage({
           speaker: speaker,
           flavor: flavor,
           rollMode: rollMode,
-          sound: "modules/critical-fumble/sounds/money_drop.mp3"
+          sound: sound
         });
+
+        return roll.total;
     };
+    
+    _coinDistributePrompt(coins){
+        let amountDisplay = this._coinToString(coins);
+        let d = new Dialog({
+            title: "Distribute Coins?",
+            content: `<p>Would you like to distribute ${amountDisplay} to all active players?</p>`,
+            buttons: {
+             yes: {
+              icon: '<i class="fas fa-check"></i>',
+              label: "Yes, distribute the coins.",
+              callback: () => this._coinDistribute(coins)
+             },
+             no: {
+              icon: '<i class="fas fa-times"></i>',
+              label: "No, I will handle it later.",
+              callback: () => {}
+             }
+            },
+            default: "yes",
+            close: () => {}
+           });
+           d.render(true);
+    }
+
+    _coinToString(coins){
+        let string = "";
+        for(let i = 0; i < coins.length; ++i){
+            if(i == coins.length - 1){
+                string += `${coins[i].coinAmount}${coins[i].cointType}.`
+            }
+            else{
+                string += `${coins[i].coinAmount}${coins[i].cointType} +`
+            }
+            
+        }
+        return string;
+    }
+
+    _coinDistribute(coins){
+        let users = game.users.entities;
+        var length = game.users.entities.length - 1;
+        for(let i = 0; i < coins.length; ++i){
+            users.forEach(async user => {
+                if(user.character != undefined && user.isGM == false){
+                    let currency = duplicate(user.character.data.data.currency);
+                    currency[coins[i].cointType.toLowerCase()] += Math.ceil(parseInt(coins[i].coinAmount / length));
+                    await user.character.update({"data.currency" : currency});
+                }
+            })
+        }
+        return;
+    }
 
 }
 
 Hooks.on('init', () => {
-    CONFIG.debug.hooks = true;
+    CRITICAL_FUMBLE_CONFIG.forEach(function(setting){
+        game.settings.register(setting.module, setting.key, setting.settings);
+    });
 })
 
 Hooks.on("ready", () => {
