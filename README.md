@@ -9,12 +9,17 @@ Additionally, every time a *targeted* monster is felled by your players, the CR 
 To further your convience, the coins dropped can be automatically distributed to your players. This option can be ignored though! 
 
 ## Features:
+See the [examples](##Examples) for video demonstrations!
 The following features are offered by Critical Fumble. Any feature marked with a **(T/F)** can be disabled or enabled.
 1. Critical hits on 20s for any of the values in the [Critical Tables](##Tables) **(T/F)** 
 2. Critical fumbles on 1s **(T/F)**
 3. Audio based off the damage type on critical hits **(T/F)**
 4. LootTable rolling on target creature death **(T/F)**
 5. LootTable distribution of wealth to active PCs **(T/F)**
+
+## Incompatibilities
+
+Due the requirement of knowing the damage type, I overloaded Dice5e.roll(). If any module overrides this method as well, they will be incompatible. 
 
 ## Installation:
 
@@ -44,6 +49,7 @@ For spells, be sure that a ranged spell attack is set up, otherwise no table wil
 
 **Using the LootTable**
 Creatures (NPCS) that have a CR level and are targeted using the targeting system will result in a roll on their corresponding CR table once they hit 0hp or lower.
+
 
 
 ## Tables
@@ -135,12 +141,13 @@ Note: All values share one sound/image in LootTable.
 
 ## Attributions
 
-Sound effects obtained from [Zapsplat](https://www.zapsplat.com)
-SVGs obtained from [FontAwesome](https://fontawesome.com). You can find the license by clicking [here](https://fontawesome.com/license)
-Icon-Sword made by [freepik](https://www.flaticon.com/authors/freepik) from [flaticon](https://www.flaticon.com/)
-Icon-dagger made by [srip](https://www.flaticon.com/authors/srip) from [flaticon](https://www.flaticon.com/)
-Icon-psychic made by [Smashicons](https://www.flaticon.com/authors/Smashicons) from [flaticon](https://www.flaticon.com/)
-Critical tables made by [Benjamin Huffman](https://sterlingvermin.files.wordpress.com/2016/09/critical-hits-revisited.pdf)
+Sound effects obtained from [Zapsplat](https://www.zapsplat.com)  
+SVGs obtained from [FontAwesome](https://fontawesome.com). You can find the license by clicking [here](https://fontawesome.com/license)  
+Icon-Sword made by [freepik](https://www.flaticon.com/authors/freepik) from [flaticon](https://www.flaticon.com/)  
+Icon-dagger made by [srip](https://www.flaticon.com/authors/srip) from [flaticon](https://www.flaticon.com/)  
+Icon-psychic made by [Smashicons](https://www.flaticon.com/authors/Smashicons) from [flaticon](https://www.flaticon.com/)  
+Critical tables made by [Benjamin Huffman](https://sterlingvermin.files.wordpress.com/2016/09/critical-hits-revisited.pdf)  
+Map used in video made by [Cze and Peku](https://www.patreon.com/czepeku/posts)
 
 ## Feedback
 
@@ -151,3 +158,10 @@ This module is still in the testing phase and is likely to have unexpect bugs or
 If you liked this project and want to support future ones, consider donating! 
 This module and all previous and future modules, as always, will be free to use an download. Any donations are warmly received and appreciated!
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=723SW7WMD8YR6&item_name=Thank+you+for+your+tip%21&currency_code=USD&source=url)
+
+
+## Examples
+
+![Crit_Fire](examples/Crit.gif)
+![Crit_Piercing](examples/Crit2.gif)
+![Crit_Loot](examples/Loot.gif)
