@@ -4,18 +4,41 @@ import {CRITICAL_FUMBLE_DESC} from "../config/config.js"
 
 class CriticalFumble{
     constructor(){
-        this.tables = [];
-        this.init();
-        this.findTable();
         this.debug = false;
         this.test = 20;
+        this.folderName = "Critical Fumble";
+        this.folderID;
+        this.tables = [];
+        this.init();
     }
 
-    capitalizeFirst(name){
-        return name.charAt(0).toUpperCase() + name.slice(1);
+    init(){
+        this.rollOverload();
+        Hooks.on('createChatMessage', (app, html) => {
+            try{
+                this.validateData(app);
+            }
+            catch(e){
+                console.log(`Error in CreateChat: ${e} at ${e.lineNumber}`);
+            }
+        });
+        this.ensureTableImport();
     }
 
-    findTable(){
+    async ensureTableImport(){
+        this.folderID = await this.handleFolder(); 
+        this.ensureTables();
+    }
+
+    async handleFolder(){
+        let folder = Folder.collection.entities.find(folder => {return folder.data.name === this.folderName});
+        if(!folder)
+            return (await Folder.create({name : this.folderName, type: "RollTable", color:"Green", parent:null})).id;
+        else   
+            return folder.id;
+    }
+
+    ensureTables(){
         Object.keys(CRITICAL_FUMBLE_DESC).forEach(async function(tableName){
             let tempTable = this.capitalizeFirst(tableName);
             let result = await RollTable.collection.entities.find(function(table){ return table.data.name == `Critical-Fumble ${tempTable}`})
@@ -27,7 +50,7 @@ class CriticalFumble{
     }
 
     async _generateTable(tableName, data){
-        let table = await RollTable.create({name: tableName, type: "base", folder: null, types: "base", formula: data.roll}, {displaySheet: false});
+        let table = await RollTable.create({name: tableName, type: "base", folder: this.folderID, types: "base", formula: data.roll}, {displaySheet: false});
         for(const tableSlot of data.table){
             let flagInfo = {
                 critical_fumble_audio : data.sound
@@ -35,18 +58,6 @@ class CriticalFumble{
             let result = await table.createTableResult({img: data.img, collection: undefined,drawn: false, range: [tableSlot.roll[0], tableSlot.roll[1]] ,type: 0, weight: 1, text: tableSlot.description, flags: flagInfo});
         }
         this.tables.push(table);
-    }
-
-    init(){
-        this.rollOverload();
-        Hooks.on('createChatMessage', (app, html, data) => {
-            try{
-                this.validateData(app);
-            }
-            catch(e){
-                console.log(`Error in CreateChat: ${e} at ${e.lineNumber}`);
-            }
-        })
     }
 
     validateData(app){
@@ -58,7 +69,7 @@ class CriticalFumble{
         if(this.debug)
             roll = this.test;
         let table = this._validThreshold(roll, this.capitalizeFirst(type))
-        if(table != undefined)
+        if(table != undefined && app.user.isGM)
             this.rollTable(table);
     }
 
@@ -177,6 +188,11 @@ class CriticalFumble{
             });
         }
     }
+
+    capitalizeFirst(name){
+        return name.charAt(0).toUpperCase() + name.slice(1);
+    }
+
 }
 
 Hooks.on("ready", () => {
