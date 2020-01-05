@@ -5,6 +5,22 @@
     "version": "0.5.0",
     "author": "Jacob McAuley",
     "systems" : ["dnd5e"],
+    "packs": [
+        {
+            "name": "criticalfumble",
+            "label": "Critical Fumble",
+            "path": "db/criticalfumble.db",
+            "module": "critical-fumble",
+            "entity": "RollTable"
+        },
+        {
+            "name": "criticalfumbleloot",
+            "label": "Critical Fumble Loot",
+            "path": "db/criticalfumbleloot.db",
+            "module": "critical-fumble",
+            "entity": "RollTable"
+        }
+    ],
     "esmodules": [
         "./src/criticalFumble.js",
         "./src/criticalLoot.js",
