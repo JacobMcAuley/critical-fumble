@@ -4,47 +4,58 @@ import {CRITICAL_FUMBLE_CONFIG} from "../config/config.js"
 
 class CriticalLoot{
     constructor(){
+        this.folderName = "Critical Fumble Loot";
+        this.compendiumName = "criticalfumbleloot";
+        this.moduleScope = "critical-fumble";
+        this.folderID;
         this.tables = [];
         this.init();
-        this.findTable();
-    }
-
-    findTable(){
-        Object.keys(CRITICAL_FUMBLE_LOOT).forEach(async function(tableName){
-            let tempTable = tableName.toUpperCase();
-            let result = await RollTable.collection.entities.find(function(table){ return table.data.name == `Critical-Fumble ${tempTable}`})
-            if(result == undefined){ 
-                await this._generateTable(`Critical-Fumble ${tempTable}`, CRITICAL_FUMBLE_LOOT[tableName]);
-            }
-            else{
-                this.tables.push(result);
-            }
-        }.bind(this))    
-    }
-
-    async _generateTable(tableName, data){
-        let table = await RollTable.create({name: tableName, type: "base", folder: null, types: "base", formula: data.roll}, {displaySheet: false});
-        for(const tableSlot of data.table){
-            let flagData = {
-                critical_fumble_actions : tableSlot.action
-            }
-            await table.createTableResult({collection: undefined,drawn: false, range: [tableSlot.roll[0], tableSlot.roll[1]] ,type: 0, weight: 1, text: tableSlot.description, flags: flagData})
-        }
-        this.tables.push(table);
     }
 
     init(){
-        Hooks.on("updateToken", (token, id, actorData) => {
-            try{
-                this.validateData(token.actor.id, actorData)
-            }catch(e){
-                console.log(`Error in CreateChat: ${e} at ${e.lineNumber}`);
-            }
+        Hooks.on("updateToken", (token, id, tokenData) => {
+            this.validateData(token.actor.id, tokenData);
         })
+        this.ensureTableImport();
     }
-    
+
+    async ensureTableImport(){
+        this.folderID = await this.handleFolder(); 
+        this.ensureTables();
+    }
+
+    async handleFolder(){
+        let folder = Folder.collection.entities.find(folder => {return folder.data.name === this.folderName});
+        if(!folder)
+            return (await Folder.create({name : this.folderName, type: "RollTable", color:"red", parent:null})).id;
+        else   
+            return folder.id;
+    }
+
+    async ensureTables(){
+        let criticalCompendium = game.packs.find(compendium => compendium.metadata.name === this.compendiumName);
+        await criticalCompendium.getIndex();
+        criticalCompendium.index.forEach(async tableEntry => {
+            let resultingTable = RollTable.collection.entities.find(function(table){ return table.name == tableEntry.name})
+            if(!resultingTable)
+                resultingTable = await this._generateTable(criticalCompendium, tableEntry.id);
+            this.tables.push(resultingTable);
+        });
+    }
+
+    async _generateTable(pack, entryID){
+        let tableData = (await pack.getEntity(entryID)).data;
+        tableData.folder = this.folderID;
+        await RollTable.create(
+            tableData, 
+            {
+                displaySheet: false
+            }
+        );
+    }
+   
     validateData(actorId, quickData){
-        if(!game.settings.get('critical-fumble', 'lootTables'))
+        if(!game.settings.get(this.moduleScope, 'lootTables'))
             return
         const actor = Actor.collection.get(actorId);
         if(actor.isPC)
@@ -54,7 +65,7 @@ class CriticalLoot{
         if(!this.isZeroHealth(quickData))
             return
         let table = this.getTableByCR(actor)
-        if(table != undefined)
+        if(table != undefined && game.user.isGM)
             this.rollTable(table);
     }
 
@@ -129,7 +140,7 @@ class CriticalLoot{
     
     _coinDistributePrompt(coins){
         let amountDisplay = this._coinToString(coins);
-        let d = new Dialog({
+        new Dialog({
             title: "Distribute Coins?",
             content: `<p>Would you like to distribute ${amountDisplay} to all active players?</p>`,
             buttons: {
@@ -146,8 +157,7 @@ class CriticalLoot{
             },
             default: "yes",
             close: () => {}
-           });
-           d.render(true);
+        }).render(true);
     }
 
     _coinToString(coins){
