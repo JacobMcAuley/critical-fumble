@@ -22,13 +22,13 @@
         }
     ],
     "esmodules": [
+        "./src/criticalFumbleBase.js",
         "./src/criticalFumble.js",
         "./src/criticalLoot.js",
-        "./src/hooks.js",
         "./config/config.js"
     ],
     "url": "https://github.com/JacobMcAuley/critical-fumble",
     "manifest": "https://raw.githubusercontent.com/JacobMcAuley/critical-fumble/master/module.json",
     "download": "https://github.com/JacobMcAuley/critical-fumble/archive/master.zip",
-    "minimumCoreVersion": "0.4.3"
+    "minimumCoreVersion": "0.4.4"
 }
