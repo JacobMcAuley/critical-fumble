@@ -16,6 +16,7 @@ The following features are offered by Critical Fumble. Any feature marked with a
 3. Audio based off the damage type on critical hits **(T/F)**
 4. LootTable rolling on target creature death **(T/F)**
 5. LootTable distribution of wealth to active PCs **(T/F)**
+6. Private rolls on both Critical Fumble and Critical Fumble Loot **(T/F)**
 
 ## Incompatibilities
 
@@ -44,13 +45,11 @@ To use Critical-Fumble make sure you've installed the mod using the instructions
 Critical fumble should be loaded and ready to go upon enabling. To verify, simply check to see if the RollTables were successfully imported. (**NOTE:** You may find that the values display an incorrect number of entries in the table. This is okay and can be disregarded).
 
 **Using Criticals**
-To use Critical hits, wait until a player rolls a 1 or a 20 and the table will be automatically rolled for you!
+To use Critical hits, wait until a player rolls a 1 or the critical range (Player dependent) and the table will be automatically rolled for you!
 For spells, be sure that a ranged spell attack is set up, otherwise no table will be rolled.
 
 **Using the LootTable**
 Creatures (NPCS) that have a CR level and are targeted using the targeting system will result in a roll on their corresponding CR table once they hit 0hp or lower.
-
-
 
 ## Tables
 The follow tables are included within the module and imported upon start:
@@ -89,58 +88,13 @@ Currently, there is no table for fumbles on spells. All fumbles share the same C
 
 ### Table modifications?
 
-If you would like to adjust the table, you should be able to in most instances! 
+If you would like to adjust the table, you should be able to in most instances! Due to recent structure changes in the program. You'll need to adjust any changes in the .db files in the module directory. Look for any of the optional flags for any of the loot based rolls.
 
-**Simple/Text:**
-If it the desired modification is quick, such as a text change, all that you need to do is modify it directly in FVTT. Changing the corresponding text will result in the expect behavior.
-
-Changing images, sounds, or loot tables requires additional modificaiton within the files themselves. NOTE: Loot tables have slightly different requirements. So if you want to change the loot table, please refer to the **Loot Table** section.
-
-**Sound:**
-If you wish to change the sounds of the critical hits, simply add your desired sound file to the **/sounds** folder and adjust the config.js variable of **CRITICAL_FUMBLE_DESC.DESIRED_TYPE_HERE.sound** to whatever sound path you desire.
-
-**Icons:**
-If you wish to change the icons of the critical hits, simply add your desired icon file to the **/icons** folder and adjust the config.json variable of **CRITICAL_FUMBLE_DESC.DESIRED_TYPE_HERE.img** to whatever icon path you desire.
-
-**Loot Tables:**
-
-Modification of Loot Tables follows a differing method, and it more difficult to adjust than the previous section
-
-**Coin Values:**
-To adjust the values received you must navigate to the config.js and modify **CRITICAL_FUMBLE_LOOT**. Look for the CR range you wish to desire and modify based off the following description
-```
-    CR : {
-        roll: "1d100",
-        collection : undefined, // Ignore
-        type : 0, // Ignore
-        table : [
-            {
-                roll : [1, 15], // Range of success
-                description: "2d6 EP * 1000 + 8d6 GP * 100", // Text description that is displayed when rolled
-                action: [ // Nested actions that will roll for individual values. 
-                    { // This is 2d6 * 1000, the EP is to denote what coin when depositing
-                        roll: "2d6", 
-                        description: "EP",
-                        multiplier: 1000
-                    },
-                    { // If you need more than one roll, this is how you add it.
-                        roll: "8d6",
-                        description: "GP",
-                        multiplier: 100
-                    }                    
-                ]
-            },
-            ... // More values
-        ]
-    }
-```
-
-**Sounds/Imgs for LootTable**
-To adjust the sound or image or the LootTable, look under _roll() and rollTable() for any modification of sound or image. Replace as desired.
-Note: All values share one sound/image in LootTable.
+Otherwise, you can modify the values in the tables as desired via FVTT.
 
 ## Attributions
 
+Super special thanks to [Kakaroto](https://www.patreon.com/kakaroto/) for his code review!
 Sound effects obtained from [Zapsplat](https://www.zapsplat.com)  
 SVGs obtained from [FontAwesome](https://fontawesome.com). You can find the license by clicking [here](https://fontawesome.com/license)  
 Icon-Sword made by [freepik](https://www.flaticon.com/authors/freepik) from [flaticon](https://www.flaticon.com/)  

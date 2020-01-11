@@ -2,7 +2,7 @@
     "name": "critical-fumble",
     "title": "Critical Fumble",
     "description": "Automatically roll the critical/fumble table when rolling attacks!",
-    "version": "0.5.0",
+    "version": "0.6.3",
     "author": "Jacob McAuley",
     "systems" : ["dnd5e"],
     "packs": [
